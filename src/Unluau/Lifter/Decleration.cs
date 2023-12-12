@@ -22,21 +22,26 @@ namespace Unluau
             Upvalue
         }
 
-        private string? _name;
+        private string _name;
 
         public string Name
         {
             get
             {
                 if (_name is null)
-                    return Type switch
+                {
+                    switch (Type)
                     {
-                        DeclerationType.Local => $"var{Id}",
-                        DeclerationType.Closure => $"fun{Id}",
-                        DeclerationType.Upvalue => $"upval{Id}",
-                        _ => throw new Exception("Invalid DeclerationType")
-                    };
-
+                        case DeclerationType.Local:
+                            return $"var{Id}";
+                        case DeclerationType.Closure:
+                            return $"fun{Id}";
+                        case DeclerationType.Upvalue:
+                            return $"upval{Id}";
+                        default:
+                            throw new Exception("Invalid DeclerationType");
+                    }
+                }
                 return _name;
             }
         }
@@ -56,13 +61,28 @@ namespace Unluau
             Location = location;
             Type = type;
 
-            Id = type switch
+            switch (type)
             {
-                DeclerationType.Local => LocalIdCounter++,
-                DeclerationType.Closure => ClosureIdCounter++,
-                DeclerationType.Upvalue => UpvalueIdCounter++,
-                _ => throw new Exception("Invalid DeclerationType")
-            };
+                case DeclerationType.Local:
+                {
+                    Id = LocalIdCounter++;
+                    break;
+                }
+                case DeclerationType.Closure:
+                {
+                    Id = ClosureIdCounter++;
+                    break;
+                }
+                case DeclerationType.Upvalue:
+                {
+                    Id = UpvalueIdCounter++;
+                    break;
+                }
+                default:
+                {
+                    throw new Exception("Invalid DeclerationType");
+                }
+            }
         }
 
         public Decleration(int register, string name, int location) : this(register, location, DeclerationType.Local)

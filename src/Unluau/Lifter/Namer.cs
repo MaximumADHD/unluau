@@ -17,7 +17,7 @@ namespace Unluau
 
     public class Namer
     {
-        private static int _closureCount = 1;
+        //private static int _closureCount = 1;
 
         private Registers registers;
 
@@ -62,7 +62,7 @@ namespace Unluau
 
         private Decleration createNamedDecleration(int register, Expression expression, Block block, DeclerationType type)
         {
-            string? name = getName(expression);
+            string name = getName(expression);
 
             if (name != null)
                 return new Decleration(register, updateName(name), block.Statements.Count);
@@ -70,13 +70,13 @@ namespace Unluau
             return createRegularDecleration(register, expression, block, type);
         }
 
-        private string? getName(Expression expression)
+        private string getName(Expression expression)
         {
-            NameIndex? nameIndex;
+            NameIndex nameIndex;
             if ((nameIndex = expression as NameIndex) != null)
                 return nameIndex.Name;
 
-            FunctionCall? call;
+            FunctionCall call;
             if ((call = expression as FunctionCall) != null)
             {
                 string[] names = call.GetNames();

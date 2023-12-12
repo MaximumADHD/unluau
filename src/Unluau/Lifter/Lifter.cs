@@ -13,7 +13,7 @@ namespace Unluau
     {
         private Chunk chunk;
         private DecompilerOptions options;
-        private static int upvalueId = 0;
+        //private static int upvalueId = 0;
 
         private enum CaptureType : byte
         {
@@ -108,7 +108,7 @@ namespace Unluau
                     case OpCode.GETTABLEKS:
                     {   
                         Constant target = function.GetConstant(++pc);
-                        string targetValue = (target as StringConstant)!.Value;
+                        string targetValue = (target as StringConstant)?.Value;
 
                         bool isNamecall = properties.Code == OpCode.NAMECALL;
                         Expression nameExpression = registers.GetExpression(instruction.B);
@@ -119,18 +119,21 @@ namespace Unluau
                         if (isNamecall && targetValue == "format")
                         {
                             // Extract the name index from the expression
-                            NameIndex? nameIndex = expression as NameIndex;
+                            NameIndex nameIndex = expression as NameIndex;
 
                             if (options.PerferStringInterpolation)
                             {
                                 // If we perfer string interpolation set the expression as an interpolated string
-                                string format = (((LocalExpression)nameIndex!.Expression).Expression as StringLiteral)!.Value;
+
+                                string format = ((nameIndex?.Expression as LocalExpression)?.Expression as StringLiteral)?.Value;
                                 expression = new InterpolatedStringLiteral(format, new List<Expression>());
                             } 
                             else
                             {
                                 // Otherwise add an expression group around the string literal
-                                nameIndex!.Expression = new ExpressionGroup(nameIndex!.Expression);
+                                if (nameIndex != null)
+                                    nameIndex.Expression = new ExpressionGroup(nameIndex?.Expression);
+
                                 expression = nameIndex;
                             }
                         }
@@ -446,14 +449,14 @@ namespace Unluau
                             if (ifElse.IfBody.Statements.Count == 1
                                 && ifElse.IfBody.Statements.First() is LocalAssignment localAssignment)
                             {
-                                LocalExpression? expression = localAssignment.Expression as LocalExpression;
-                                UnaryExpression? unaryCondition = ifElse.Condition as UnaryExpression;
+                                LocalExpression expression = localAssignment.Expression as LocalExpression;
+                                UnaryExpression unaryCondition = ifElse.Condition as UnaryExpression;
 
-                                if (expression!.Decleration.Register == register)
+                                if (expression?.Decleration.Register == register)
                                 {
                                     // We know that the current jump instruction represents an `and` or `or` statement.
-                                    Expression left = unaryCondition is null ? ifElse.Condition : unaryCondition!.Expression; 
-                                    Expression right = expression!.Expression;
+                                    Expression left = unaryCondition is null ? ifElse.Condition : unaryCondition.Expression; 
+                                    Expression right = expression?.Expression;
 
                                     var operation = unaryCondition is null ? BinaryExpression.BinaryOperation.And : BinaryExpression.BinaryOperation.Or;
 
@@ -481,7 +484,7 @@ namespace Unluau
                             if (capture.GetProperties().Code != OpCode.CAPTURE)
                                 throw new DecompilerException(Stage.Lifter, "Expected capture instruction following NEWCLOSURE/DUPCLOSURE");
 
-                            LocalExpression? expression;
+                            LocalExpression expression;
 
                             switch ((CaptureType)capture.A)
                             {
@@ -499,8 +502,9 @@ namespace Unluau
                                     throw new DecompilerException(Stage.Lifter, $"Unknown capture type {capture.A}");
                             }
 
-                            expression!.Decleration.Referenced++;
-                            
+                            if (expression != null)
+                                expression.Decleration.Referenced++;
+
                             newFunction.Upvalues.Add(expression);
                         }
 

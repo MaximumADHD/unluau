@@ -24,7 +24,7 @@ namespace Unluau
             output.Write(Value);
         }
 
-        public int CompareTo(string? other) => Value.CompareTo(other);
+        public int CompareTo(string other) => Value.CompareTo(other);
 
         public override string[] GetNames()
         {

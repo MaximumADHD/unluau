@@ -17,12 +17,12 @@ namespace Unluau
         public bool HeaderEnabled { get; set; } = true;
         public bool InlineTableDefintions { get; set; } = false;
         public bool RenameUpvalues { get; set; }
-        public string? Version { get; set; }
+        public string Version { get; set; }
         public bool Verbose { get; set; }
         public bool Warnings { get; set; }
         public OpCodeEncoding Encoding { get; set; }
         public Output Output { get; set; } = new Output();
-        public StreamWriter? LogFile { get; set; }
+        public StreamWriter LogFile { get; set; }
     }
 
     public class Decompiler
@@ -45,7 +45,7 @@ namespace Unluau
             Guid = Guid.NewGuid();
         }
 
-        private void OnLogRecieved(object? sender, LogRecievedEventArgs e)
+        private void OnLogRecieved(object sender, LogRecievedEventArgs e)
         {
             if (e.Message.Severity == LogSeverity.Warn && !_options.Warnings)
                 return;
@@ -65,7 +65,7 @@ namespace Unluau
                     break;
             }
 
-            _options.LogFile!.WriteLine(Text);
+            _options.LogFile?.WriteLine(Text);
             Console.ForegroundColor = ConsoleColor.Gray;
         }
 
@@ -76,7 +76,7 @@ namespace Unluau
             OuterBlock program = lifter.LiftProgram();
 
             if (_options.HeaderEnabled)
-                _options.Output.WriteLine($"-- Unluau v{_options.Version} guid: {Guid}");
+                _options.Output.WriteLine($"-- Generated with Unluau (https://github.com/valencefun/unluau)");
 
             program.Write(_options.Output);
             _options.Output.Flush();

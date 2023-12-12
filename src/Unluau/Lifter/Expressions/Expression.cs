@@ -17,7 +17,7 @@ namespace Unluau
             return null;
         }
 
-        public Expression? GetValue()
+        public Expression GetValue()
         {
             if (this is LocalExpression local)
             {

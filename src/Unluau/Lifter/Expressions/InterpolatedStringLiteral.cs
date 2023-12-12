@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Valence. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0
 
+using System.Collections.Generic;
+
 namespace Unluau
 {
     public class InterpolatedStringLiteral : StringLiteral

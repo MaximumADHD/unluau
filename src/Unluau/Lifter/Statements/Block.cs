@@ -39,14 +39,14 @@ namespace Unluau
         {
             Statements.Add(statement);
 
-            Expression? value = null;
+            Expression value = null;
 
             if (statement is Assignment assignment)
                 value = assignment.Value;
             else if (statement is LocalAssignment local)
                 value = local.Value;
 
-            if (value is not null && value is Closure closure)
+            if (value != null && value is Closure closure)
             {
 
             }
